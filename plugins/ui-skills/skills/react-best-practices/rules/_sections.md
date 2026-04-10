@@ -15,10 +15,10 @@ The section ID (in parentheses) is the filename prefix used to group rules.
 **Impact:** CRITICAL  
 **Description:** Reducing initial bundle size improves Time to Interactive and Largest Contentful Paint.
 
-## 3. Server-Side Performance (server)
+## 3. SSR Performance (server)
 
 **Impact:** HIGH  
-**Description:** Optimizing server-side rendering and data fetching eliminates server-side waterfalls and reduces response times.
+**Description:** Avoiding common pitfalls in server-side rendering environments, including concurrency safety and cross-request caching.
 
 ## 4. Client-Side Data Fetching (client)
 

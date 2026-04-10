@@ -34,8 +34,6 @@ export async function getUser(id: string) {
 
 Use when sequential user actions hit multiple endpoints needing the same data within seconds.
 
-**With Vercel's [Fluid Compute](https://vercel.com/docs/fluid-compute):** LRU caching is especially effective because multiple concurrent requests can share the same function instance and cache. This means the cache persists across requests without needing external storage like Redis.
-
-**In traditional serverless:** Each invocation runs in isolation, so consider Redis for cross-process caching.
+**Note:** In long-lived server processes, the LRU cache persists across requests naturally. In serverless environments where each invocation may run in isolation, consider external caching (e.g., Redis) for cross-process sharing.
 
 Reference: [https://github.com/isaacs/node-lru-cache](https://github.com/isaacs/node-lru-cache)

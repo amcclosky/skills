@@ -1,24 +1,24 @@
 ---
-name: vercel-react-best-practices
-description: React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.
+name: react-best-practices
+description: React performance optimization guidelines originally from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React code to ensure optimal performance patterns. Triggers on tasks involving React components, performance issues, bundle optimization, re-render optimization, code-splitting, or memoization.
 license: MIT
 metadata:
   author: vercel
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
-# Vercel React Best Practices
+# React Best Practices
 
-Comprehensive performance optimization guide for React and Next.js applications, maintained by Vercel. Contains 69 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+Comprehensive performance optimization guide for React applications, originally maintained by Vercel Engineering. Contains 60 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
 
 ## When to Apply
 
 Reference these guidelines when:
-- Writing new React components or Next.js pages
-- Implementing data fetching (client or server-side)
+- Writing new React components
 - Reviewing code for performance issues
-- Refactoring existing React/Next.js code
+- Refactoring existing React code
 - Optimizing bundle size or load times
+- Reducing unnecessary re-renders
 
 ## Rule Categories by Priority
 
@@ -26,7 +26,7 @@ Reference these guidelines when:
 |----------|----------|--------|--------|
 | 1 | Eliminating Waterfalls | CRITICAL | `async-` |
 | 2 | Bundle Size Optimization | CRITICAL | `bundle-` |
-| 3 | Server-Side Performance | HIGH | `server-` |
+| 3 | SSR Performance | HIGH | `server-` |
 | 4 | Client-Side Data Fetching | MEDIUM-HIGH | `client-` |
 | 5 | Re-render Optimization | MEDIUM | `rerender-` |
 | 6 | Rendering Performance | MEDIUM | `rendering-` |
@@ -41,33 +41,24 @@ Reference these guidelines when:
 - `async-defer-await` - Move await into branches where actually used
 - `async-parallel` - Use Promise.all() for independent operations
 - `async-dependencies` - Use better-all for partial dependencies
-- `async-api-routes` - Start promises early, await late in API routes
 - `async-suspense-boundaries` - Use Suspense to stream content
 
 ### 2. Bundle Size Optimization (CRITICAL)
 
 - `bundle-barrel-imports` - Import directly, avoid barrel files
-- `bundle-dynamic-imports` - Use next/dynamic for heavy components
-- `bundle-defer-third-party` - Load analytics/logging after hydration
+- `bundle-dynamic-imports` - Use React.lazy for heavy components
+- `bundle-defer-third-party` - Load analytics/logging after initial render
 - `bundle-conditional` - Load modules only when feature is activated
 - `bundle-preload` - Preload on hover/focus for perceived speed
 
-### 3. Server-Side Performance (HIGH)
+### 3. SSR Performance (HIGH)
 
-- `server-auth-actions` - Authenticate server actions like API routes
-- `server-cache-react` - Use React.cache() for per-request deduplication
 - `server-cache-lru` - Use LRU cache for cross-request caching
-- `server-dedup-props` - Avoid duplicate serialization in RSC props
-- `server-hoist-static-io` - Hoist static I/O (fonts, logos) to module level
-- `server-no-shared-module-state` - Avoid module-level mutable request state in RSC/SSR
-- `server-serialization` - Minimize data passed to client components
-- `server-parallel-fetching` - Restructure components to parallelize fetches
-- `server-parallel-nested-fetching` - Chain nested fetches per item in Promise.all
-- `server-after-nonblocking` - Use after() for non-blocking operations
+- `server-no-shared-module-state` - Avoid module-level mutable request state in SSR
 
 ### 4. Client-Side Data Fetching (MEDIUM-HIGH)
 
-- `client-swr-dedup` - Use SWR for automatic request deduplication
+- `client-fetch-dedupe` - Use a data-fetching library with built-in deduplication
 - `client-event-listeners` - Deduplicate global event listeners
 - `client-passive-event-listeners` - Use passive listeners for scroll
 - `client-localstorage-schema` - Version and minimize localStorage data
@@ -142,7 +133,3 @@ Each rule file contains:
 - Incorrect code example with explanation
 - Correct code example with explanation
 - Additional context and references
-
-## Full Compiled Document
-
-For the complete guide with all rules expanded: `AGENTS.md`

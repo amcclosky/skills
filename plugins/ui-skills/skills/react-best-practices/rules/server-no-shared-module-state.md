@@ -2,12 +2,12 @@
 title: Avoid Shared Module State for Request Data
 impact: HIGH
 impactDescription: prevents concurrency bugs and request data leaks
-tags: server, rsc, ssr, concurrency, security, state
+tags: server, ssr, concurrency, security, state
 ---
 
 ## Avoid Shared Module State for Request Data
 
-For React Server Components and client components rendered during SSR, avoid using mutable module-level variables to share request-scoped data. Server renders can run concurrently in the same process. If one render writes to shared module state and another render reads it, you can get race conditions, cross-request contamination, and security bugs where one user's data appears in another user's response.
+When using server-side rendering, avoid using mutable module-level variables to share request-scoped data. Server renders can run concurrently in the same process. If one render writes to shared module state and another render reads it, you can get race conditions, cross-request contamination, and security bugs where one user's data appears in another user's response.
 
 Treat module scope on the server as process-wide shared memory, not request-local state.
 

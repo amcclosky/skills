@@ -50,19 +50,4 @@ export default function Document() {
 }
 ```
 
-**Note:** In Next.js, prefer the `next/script` component with `strategy` prop instead of raw script tags:
-
-```tsx
-import Script from 'next/script'
-
-export default function Page() {
-  return (
-    <>
-      <Script src="https://example.com/analytics.js" strategy="afterInteractive" />
-      <Script src="/scripts/utils.js" strategy="beforeInteractive" />
-    </>
-  )
-}
-```
-
 Reference: [MDN - Script element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#defer)
