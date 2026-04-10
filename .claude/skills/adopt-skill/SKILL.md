@@ -20,7 +20,7 @@ Usage: `/adopt-skill <skill-name> <plugin-name>`
    ```
 5. Symlink it back:
    ```bash
-   ln -s ../../../plugins/<plugin-name>/skills/<skill-name> .claude/skills/<skill-name>
+   ln -s ../../plugins/<plugin-name>/skills/<skill-name> .claude/skills/<skill-name>
    ```
 6. Verify the symlink resolves correctly:
    ```bash
