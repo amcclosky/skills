@@ -1,4 +1,5 @@
 ---
+name: commit
 description: Commit pending changes with context-aware messages based on conversation
 model: sonnet
 tools: Bash(git status:*), Bash(git diff:*), Bash(git add:*), Bash(git commit:*), Bash(git log:*)

@@ -1,0 +1,1 @@
+../../plugins/dev-tools/commands/commit.md
