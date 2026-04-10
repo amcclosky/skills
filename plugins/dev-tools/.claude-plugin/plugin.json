@@ -1,7 +1,7 @@
 {
-  "name": "dev-skills",
+  "name": "dev-tools",
   "version": "0.1.0",
-  "description": "A Claude Code plugin",
+  "description": "A collection of development skills and agents",
   "author": {
     "name": "Anthony McClosky"
   },
