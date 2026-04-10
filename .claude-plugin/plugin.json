@@ -1,0 +1,9 @@
+{
+  "name": "skills",
+  "version": "0.1.0",
+  "description": "A Claude Code plugin",
+  "author": {
+    "name": "Anthony McClosky"
+  },
+  "license": "MIT"
+}
