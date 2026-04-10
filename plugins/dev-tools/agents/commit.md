@@ -1,6 +1,7 @@
 ---
 description: Commit pending changes with context-aware messages based on conversation
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git add:*), Bash(git commit:*), Bash(git log:*)
+model: sonnet
+tools: Bash(git status:*), Bash(git diff:*), Bash(git add:*), Bash(git commit:*), Bash(git log:*)
 ---
 
 Commit all pending changes on this branch. Follow these steps:
