@@ -14,6 +14,16 @@
         "name": "Anthony McClosky"
       },
       "source": "./plugins/dev-tools"
+    },
+    {
+      "name": "ui-skills",
+      "description": "A collection of UI, design, and frontend best-practice skills",
+      "version": "2026.4.0",
+      "category": "frontend",
+      "author": {
+        "name": "Anthony McClosky"
+      },
+      "source": "./plugins/ui-skills"
     }
   ]
 }

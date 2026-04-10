@@ -1,0 +1,9 @@
+{
+  "name": "ui-skills",
+  "version": "2026.4.0",
+  "description": "A collection of UI, design, and frontend best-practice skills",
+  "author": {
+    "name": "Anthony McClosky"
+  },
+  "license": "MIT"
+}
