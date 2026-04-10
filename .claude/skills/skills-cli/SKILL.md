@@ -9,15 +9,17 @@ Manage agent skills via `pnpm dlx skills`. Always run through mise and always ta
 
 ## Install a skill
 
+Always pass `--yes` to skip interactive prompts (scope selection, confirmation) that hang in non-interactive shells.
+
 ```bash
 # From GitHub repo
-mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code
+mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --yes
 
 # From URL
-mise exec -- pnpm dlx skills add <url> --agent claude-code
+mise exec -- pnpm dlx skills add <url> --agent claude-code --yes
 
 # Pick specific skills from a multi-skill repo
-mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --skill <name>
+mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --skill <name> --yes
 ```
 
 ## Remove a skill
