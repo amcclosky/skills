@@ -6,16 +6,16 @@ This project uses [pnpm](https://pnpm.io) as its package manager. Never use npm 
 
 Use pnpm equivalents for all package management operations:
 
-| Instead of          | Use                  |
-|---------------------|----------------------|
-| `npm install`       | `pnpm install`       |
-| `npm ci`            | `pnpm install --frozen-lockfile` |
-| `npm run <script>`  | `pnpm run <script>`  |
-| `npx <cmd>`         | `pnpm dlx <cmd>`     |
-| `npm test`          | `pnpm test`          |
-| `npm add <pkg>`     | `pnpm add <pkg>`     |
-| `npm add -D <pkg>`  | `pnpm add -D <pkg>`  |
-| `npm remove <pkg>`  | `pnpm remove <pkg>`  |
+| Instead of         | Use                              |
+| ------------------ | -------------------------------- |
+| `npm install`      | `pnpm install`                   |
+| `npm ci`           | `pnpm install --frozen-lockfile` |
+| `npm run <script>` | `pnpm run <script>`              |
+| `npx <cmd>`        | `pnpm dlx <cmd>`                 |
+| `npm test`         | `pnpm test`                      |
+| `npm add <pkg>`    | `pnpm add <pkg>`                 |
+| `npm add -D <pkg>` | `pnpm add -D <pkg>`              |
+| `npm remove <pkg>` | `pnpm remove <pkg>`              |
 
 Remember to prefix all commands with `mise exec --` per project rules:
 
