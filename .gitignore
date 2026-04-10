@@ -10,7 +10,6 @@ Thumbs.db
 *.swo
 *~
 .idea/
-.vscode/
 
 # Environment
 .env
