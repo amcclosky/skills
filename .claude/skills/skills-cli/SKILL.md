@@ -7,20 +7,24 @@ description: Install, remove, update, and restore agent skills using the skills 
 
 Manage agent skills via `pnpm dlx skills`. Always run through mise and always target `--agent claude-code`.
 
-## Install a skill
+## Install skills
 
 Always pass `--yes` to skip interactive prompts (scope selection, confirmation) that hang in non-interactive shells.
 
+**Always pass `--agent claude-code`** — never omit it. Without it the CLI installs to every agent it finds, creating dozens of unwanted directories.
+
 ```bash
-# From GitHub repo
+# All skills from a repo
 mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --yes
 
-# From URL
-mise exec -- pnpm dlx skills add <url> --agent claude-code --yes
+# Specific skills from a multi-skill repo (pass all names to one --skill flag)
+mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --skill <name1> <name2> <name3> --yes
 
-# Pick specific skills from a multi-skill repo
-mise exec -- pnpm dlx skills add <owner>/<repo> --agent claude-code --skill <name> --yes
+# From a URL
+mise exec -- pnpm dlx skills add <url> --agent claude-code --yes
 ```
+
+When the user asks to install multiple skills from the same repo, use a single `add` command with `--skill <name1> <name2> ...` — do not run separate commands per skill.
 
 ## Remove a skill
 
@@ -51,6 +55,8 @@ mise exec -- pnpm dlx skills list
 
 ## Rules
 
-1. **Always pass `--agent claude-code`** when adding or removing skills.
-2. **Always run through `mise exec --`**.
-3. **Commit `skills-lock.json`** after adding or removing skills.
+1. **Always pass `--agent claude-code`** when adding or removing skills. Never omit this flag — the default installs to all detected agents.
+2. **Always pass `--yes`** to avoid interactive prompts that hang.
+3. **Always run through `mise exec --`**.
+4. **Commit `skills-lock.json`** after adding or removing skills.
+5. **One command for multiple skills** — use `--skill name1 name2 name3`, not separate invocations.
