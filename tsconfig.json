@@ -12,5 +12,5 @@
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true
   },
-  "include": ["scripts", ".claude/skills/*/scripts", ".claude/plugins/*/skills/*/scripts"]
+  "include": ["scripts", "plugins/*/skills/*/scripts", ".claude/plugins/*/skills/*/scripts"]
 }

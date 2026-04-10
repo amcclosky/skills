@@ -10,4 +10,5 @@ export default defineConfig({
     typeAware: true,
     typeCheck: true,
   },
+  ignorePatterns: [".claude/skills/**"],
 });
