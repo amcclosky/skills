@@ -6,7 +6,12 @@ set -euo pipefail
 PORT="${AGENT_CHROME_PORT:-9222}"
 PROFILE="${AGENT_CHROME_PROFILE:-$HOME/.agent-browser/chrome-profile}"
 APP="Google Chrome"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "$SCRIPT_PATH" ]]; do
+  link_target="$(readlink "$SCRIPT_PATH")"
+  [[ "$link_target" == /* ]] && SCRIPT_PATH="$link_target" || SCRIPT_PATH="$(dirname "$SCRIPT_PATH")/$link_target"
+done
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd -P)"
 KEYCHAIN_PREFIX="agent-browser:"
 
 is_up() { curl -fsS --max-time 2 "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; }
