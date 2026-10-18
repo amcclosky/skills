@@ -1,6 +1,7 @@
 ---
 name: local-browse
 description: Run and use the dedicated persistent Helium browser (Chromium), drive Mobile Safari in a persistent iOS Simulator with wdio session (pages) and agent-device (native iOS UI), and use the agent-only credential vault for agent-browser. Use when a browser task needs a logged-in session, a real headed browser, real mobile Safari or an iPhone view of a page, or credentials for a site; or when the user asks to do or check something "on mobile", "in mobile", or on "mobile web" (use the iOS Simulator workflow, not agent-browser); or when the user mentions local-browse, agent-device, the agent vault, or the "Agent Browser" 1Password vault.
+disable-model-invocation: true
 ---
 
 # local-browse
