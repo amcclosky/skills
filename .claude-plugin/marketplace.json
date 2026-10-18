@@ -27,7 +27,7 @@
     },
     {
       "name": "agent-chrome",
-      "description": "Persistent headed Chrome for agent-browser, plus an agent-only credential vault (Keychain or 1Password service account)",
+      "description": "Persistent headed Helium browser for agent-browser, plus an agent-only credential vault (Keychain or 1Password service account)",
       "version": "2026.4.1",
       "category": "automation",
       "author": {

@@ -55,7 +55,7 @@ claude plugin install ui-skills@amcclosky
 
 ### agent-chrome
 
-A persistent, headed Chrome for [agent-browser](https://github.com/vercel-labs/agent-browser), plus an agent-only credential vault (macOS Keychain or a scoped 1Password service account).
+A persistent, headed [Helium](https://github.com/imputnet/helium) browser (Chromium) for [agent-browser](https://github.com/vercel-labs/agent-browser), plus an agent-only credential vault (macOS Keychain or a scoped 1Password service account).
 
 ```
 claude plugin install agent-chrome@amcclosky
@@ -65,12 +65,17 @@ After installing, run `agent-chrome setup` once.
 
 #### Skills
 
-- **agent-chrome** — Start and use the dedicated Chrome, and log in with agent-vault credentials
+- **agent-chrome** — Start and use the dedicated Helium browser, drive Mobile Safari in the iOS Simulator with [wdio session](https://webdriver.io/docs/session) (pages) and [agent-device](https://github.com/callstack/agent-device) (native iOS UI), and log in with agent-vault credentials
+  - `references/playbooks/` holds saved, verified workflows (sign in to Google, sign in with Google on another site, open a site on mobile) so they are not rediscovered each time
 
 #### Binaries
 
 - `agent-chrome` — `start`, `stop`, `status`, `setup`, and `vault add|remove|op-token`
 - `agent-browser-plugin-vault` — agent-browser credential provider (`keychain` and `1password` backends)
+
+#### MCP servers
+
+- `safari-mcp` — Safari's built-in MCP server (`safaridriver --mcp`, Safari 27+) for desktop Safari. Enable Safari → Settings → Developer → "Allow remote automation and external agents" first.
 
 ## Acknowledgements
 

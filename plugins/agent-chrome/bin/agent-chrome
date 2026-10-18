@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Manage a dedicated, persistent, headed Chrome for agent-browser (CDP on localhost),
+# Manage a dedicated, persistent, headed Helium (Chromium) for agent-browser (CDP on localhost),
 # plus the agent's own credential vault (macOS Keychain / 1Password service account).
 set -euo pipefail
 
 PORT="${AGENT_CHROME_PORT:-9222}"
-PROFILE="${AGENT_CHROME_PROFILE:-$HOME/.agent-browser/chrome-profile}"
-APP="Google Chrome"
+# Empty PROFILE = Helium's own default data dir (separate from Google Chrome's).
+PROFILE="${AGENT_CHROME_PROFILE:-}"
+APP="${AGENT_CHROME_APP:-Helium}"
 SCRIPT_PATH="${BASH_SOURCE[0]}"
 while [[ -L "$SCRIPT_PATH" ]]; do
   link_target="$(readlink "$SCRIPT_PATH")"
@@ -15,39 +16,81 @@ SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd -P)"
 KEYCHAIN_PREFIX="agent-browser:"
 
 is_up() { curl -fsS --max-time 2 "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; }
+profile_desc() { echo "${PROFILE:-$APP default}"; }
 
 start() {
   if is_up; then
     echo "agent-chrome already running on port $PORT"
     return 0
   fi
-  mkdir -p "$PROFILE"
+  # A second launch on the same data dir hands off to the running instance and drops
+  # --remote-debugging-port, so an instance started without it has to be quit first.
+  if [[ -z "$PROFILE" ]] && pgrep -f "/$APP.app/Contents/MacOS/" >/dev/null; then
+    echo "$APP is already running without remote debugging on port $PORT; quit it (Cmd-Q), then run agent-chrome start" >&2
+    return 1
+  fi
   # No --enable-automation: that flag is what triggers the "controlled by automated software" banner.
   local args=(
-    "--user-data-dir=$PROFILE"
     "--remote-debugging-port=$PORT"
     "--remote-debugging-address=127.0.0.1"
     "--no-first-run"
     "--no-default-browser-check"
   )
+  if [[ -n "$PROFILE" ]]; then
+    mkdir -p "$PROFILE"
+    args+=("--user-data-dir=$PROFILE")
+  fi
   [[ "${1:-}" == "--headless" ]] && args+=("--headless=new")
   open -na "$APP" --args "${args[@]}"
   for _ in $(seq 1 30); do
-    is_up && { echo "agent-chrome ready: http://127.0.0.1:$PORT (profile: $PROFILE)"; return 0; }
+    is_up && { echo "agent-chrome ready: http://127.0.0.1:$PORT (profile: $(profile_desc))"; return 0; }
     sleep 0.5
   done
   echo "agent-chrome failed to start on port $PORT" >&2
   return 1
 }
 
+# Ask the browser to shut down over CDP (Browser.close) so cookies and session state are
+# flushed to disk. A signal kill leaves the profile marked "Crashed" and drops recent logins.
+cdp_close() {
+  /usr/bin/python3 -I - "$PORT" <<'PY'
+import base64, json, os, socket, struct, sys, urllib.request
+
+port = sys.argv[1]
+url = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/json/version", timeout=2))["webSocketDebuggerUrl"]
+path = url.split(f":{port}", 1)[1]
+sock = socket.create_connection(("127.0.0.1", int(port)), timeout=5)
+key = base64.b64encode(os.urandom(16)).decode()
+sock.sendall((f"GET {path} HTTP/1.1\r\nHost: 127.0.0.1:{port}\r\nUpgrade: websocket\r\n"
+              f"Connection: Upgrade\r\nSec-WebSocket-Key: {key}\r\nSec-WebSocket-Version: 13\r\n\r\n").encode())
+if b" 101 " not in sock.recv(4096).split(b"\r\n", 1)[0]:
+    sys.exit(1)
+payload = json.dumps({"id": 1, "method": "Browser.close"}).encode()
+mask = os.urandom(4)
+frame = bytes([0x81, 0x80 | len(payload)]) + mask + bytes(b ^ mask[i % 4] for i, b in enumerate(payload))
+sock.sendall(frame)
+try:
+    sock.recv(4096)
+except OSError:
+    pass
+PY
+}
+
 stop() {
-  pkill -f -- "--user-data-dir=$PROFILE" || { echo "agent-chrome not running"; return 0; }
-  echo "agent-chrome stopped"
+  is_up || { echo "agent-chrome not running"; return 0; }
+  cdp_close || true
+  for _ in $(seq 1 40); do
+    is_up || { echo "agent-chrome stopped"; return 0; }
+    sleep 0.5
+  done
+  # Did not exit on its own: fall back to a signal, matching the flag we launch with.
+  pkill -f -- "/$APP.app/Contents/MacOS/.*--remote-debugging-port=$PORT" || true
+  echo "agent-chrome stopped (forced; recent logins may not have been saved)"
 }
 
 status() {
   if is_up; then
-    echo "running on port $PORT (profile: $PROFILE)"
+    echo "running on port $PORT (profile: $(profile_desc))"
   else
     echo "not running"
     return 1
