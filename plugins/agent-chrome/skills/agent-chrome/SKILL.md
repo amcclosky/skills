@@ -7,6 +7,8 @@ description: Run and use the dedicated persistent Chrome and the agent-only cred
 
 A dedicated, headed Chrome with its own persistent profile (`~/.agent-browser/chrome-profile`), exposing CDP on `127.0.0.1:9222`. `~/.agent-browser/config.json` points agent-browser at it by default, so plain `agent-browser <cmd>` drives this Chrome.
 
+This skill only covers the Chrome instance and its credentials. For the browsing commands themselves (navigate, snapshot, click, fill, screenshots), use the `agent-browser:agent-browser` skill if it is available.
+
 ## Before browsing
 
 ```bash
