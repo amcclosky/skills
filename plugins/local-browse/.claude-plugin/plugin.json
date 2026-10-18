@@ -5,5 +5,11 @@
   "author": {
     "name": "Anthony McClosky"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "agent-browser",
+      "marketplace": "agent-browser"
+    }
+  ]
 }

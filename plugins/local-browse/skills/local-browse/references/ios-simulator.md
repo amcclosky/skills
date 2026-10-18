@@ -11,6 +11,8 @@ Tool references: [wdio-session.md](wdio-session.md) (the page) and [agent-device
 
 ## Setup (once)
 
+Full install steps for every tool, with checks: [setup.md](setup.md#mobile-safari). In short:
+
 ```bash
 mise use -g npm:appium@3.8.0 && mise exec -- appium driver install xcuitest   # Appium + XCUITest driver
 command -v pitchfork >/dev/null || mise use -g pitchfork                      # background daemons (Appium); skip if already on PATH

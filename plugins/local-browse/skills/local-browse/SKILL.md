@@ -9,7 +9,7 @@ Persistent local browsers for agents: a headed Helium (Chromium) that agent-brow
 
 **Mobile requests go to the iOS Simulator.** When the user asks to do, test, view, or screenshot something "on mobile", "in mobile", on "mobile web", on an iPhone, or in Mobile Safari, use `wdio session` for the page and `agent-device` for native iOS UI ([ios-simulator.md](references/ios-simulator.md)). Do not use `agent-browser`, its `--device` emulation, or `agent-browser -p ios` for these, even if the agent-browser skill is also loaded.
 
-For the browsing commands themselves on desktop (navigate, snapshot, click, fill, screenshots), use the `agent-browser:agent-browser` skill if it is available.
+For the browsing commands themselves on desktop (navigate, snapshot, click, fill, screenshots), use the `agent-browser:agent-browser` skill (the `agent-browser` plugin is a declared dependency of this plugin).
 
 ## References
 
@@ -17,6 +17,7 @@ Read the one you need before using the tool:
 
 | Reference | Read it when |
 |---|---|
+| [setup.md](references/setup.md) | A tool or command is missing, on a fresh machine, or you need to know how a tool is installed and checked. |
 | [helium.md](references/helium.md) | Starting, stopping or checking the persistent Helium browser (`local-browse start\|stop\|status\|setup`), or when agent-browser cannot connect. |
 | [ios-simulator.md](references/ios-simulator.md) | Anything "on mobile": one-time setup, booting the simulator, running Appium under pitchfork. |
 | [wdio-session.md](references/wdio-session.md) | Driving a page in Mobile Safari (snapshot, click, fill, screenshot, JS). |

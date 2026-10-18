@@ -4,6 +4,9 @@
   "owner": {
     "name": "Anthony McClosky"
   },
+  "allowCrossMarketplaceDependenciesOn": [
+    "agent-browser"
+  ],
   "plugins": [
     {
       "name": "dev-tools",

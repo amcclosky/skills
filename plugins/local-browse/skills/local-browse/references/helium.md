@@ -4,6 +4,8 @@ A dedicated, headed [Helium](https://github.com/imputnet/helium) (Chromium) brow
 
 ## Before browsing
 
+Installing Helium and agent-browser: [setup.md](setup.md#helium-and-agent-browser).
+
 ```bash
 local-browse status   # exit 1 if not running
 local-browse start    # no-op if already running; add --headless only if the user asks

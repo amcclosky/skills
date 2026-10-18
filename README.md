@@ -61,12 +61,12 @@ Persistent local browsers for agents: a headed [Helium](https://github.com/imput
 claude plugin install local-browse@amcclosky
 ```
 
-After installing, run `local-browse setup` once.
+Installing it also installs the [agent-browser](https://github.com/vercel-labs/agent-browser) plugin (a declared dependency, allowed through `allowCrossMarketplaceDependenciesOn`). The `agent-browser` CLI itself is separate: `npm i -g agent-browser`. After installing, run `local-browse setup` once.
 
 #### Skills
 
 - **local-browse** — Start and use the dedicated Helium browser, drive Mobile Safari in the iOS Simulator with [wdio session](https://webdriver.io/docs/session) (pages) and [agent-device](https://github.com/callstack/agent-device) (native iOS UI), and log in with agent-vault credentials
-  - `references/` has one guide per tool (Helium, iOS Simulator, wdio session, agent-device, safari-mcp, credentials), and `references/playbooks/` holds saved, verified workflows (sign in to Google, sign in with Google on another site, open a site on mobile) so they are not rediscovered each time
+  - `references/` has an install guide (`setup.md`) and one guide per tool (Helium, iOS Simulator, wdio session, agent-device, safari-mcp, credentials), and `references/playbooks/` holds saved, verified workflows (sign in to Google, sign in with Google on another site, open a site on mobile) so they are not rediscovered each time
 
 #### Binaries
 
