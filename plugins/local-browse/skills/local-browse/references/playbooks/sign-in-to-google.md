@@ -7,7 +7,7 @@ Last verified: 2026-10-18, desktop in Helium with agent-browser 0.39.1, mobile w
 ## Before you start
 
 - The vault item is in the **Agent Browser** vault (find its ID with `op item list --vault "Agent Browser"`; titles with parentheses cannot be used in `op://` references, so use the ID).
-- Define the helpers from [Logging in on mobile](../../SKILL.md#logging-in-on-mobile) (`opr`, `otp`). Read values inline; never print them.
+- Define the helpers from [Logging in on mobile](../credentials.md#logging-in-on-mobile) (`opr`, `otp`). Read values inline; never print them.
 - **Use the full email address** (`anthony@almostproductive.com`). The vault item's username field holds only `anthony`, which Google rejects ("Couldn't find this account").
 - **Do not use `agent-browser auth login`.** It types the vault username (`anthony`) into the email box and then stalls waiting for a password field, because Google asks for each credential on its own page.
 - Discard the output of every `fill` that carries a secret: `>/dev/null 2>&1`. `wdio session fill` echoes the value it typed.
