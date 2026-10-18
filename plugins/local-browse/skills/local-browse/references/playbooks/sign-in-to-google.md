@@ -35,7 +35,7 @@ Open `https://myaccount.google.com/`. Signed in: title "Google Account" and a bu
 
 ## Gotchas
 
-- **Persistence needs a clean browser exit.** On desktop, stop Helium with `agent-chrome stop` (it quits over CDP). A `kill`/`pkill` left the profile marked "Crashed" and the login was lost. The mobile login persisted across a simulator restart with `--no-reset`.
+- **Persistence needs a clean browser exit.** On desktop, stop Helium with `local-browse stop` (it quits over CDP). A `kill`/`pkill` left the profile marked "Crashed" and the login was lost. The mobile login persisted across a simulator restart with `--no-reset`.
 - **Mobile passkey sheet.** On the iOS Simulator, step 2b shows a native "Bluetooth Off" or QR passkey sheet over the page. A WebDriver `click` on "Try another way" still works under it. If something native must be dismissed, use `agent-device press <x> <y>` (back chevron, then the QR sheet's X). Decline iOS's "Save Password?" prompt with "Not Now".
 - **Sign out to retest:** open `https://accounts.google.com/Logout`.
 - On mobile the keyboard can swallow the first tap on a button; tap again and check with a screenshot.

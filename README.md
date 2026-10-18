@@ -53,24 +53,24 @@ claude plugin install ui-skills@amcclosky
 
 ---
 
-### agent-chrome
+### local-browse
 
-A persistent, headed [Helium](https://github.com/imputnet/helium) browser (Chromium) for [agent-browser](https://github.com/vercel-labs/agent-browser), plus an agent-only credential vault (macOS Keychain or a scoped 1Password service account).
+Persistent local browsers for agents: a headed [Helium](https://github.com/imputnet/helium) browser (Chromium) for [agent-browser](https://github.com/vercel-labs/agent-browser), desktop Safari, and Mobile Safari in the iOS Simulator, plus an agent-only credential vault (macOS Keychain or a scoped 1Password service account) and saved playbooks.
 
 ```
-claude plugin install agent-chrome@amcclosky
+claude plugin install local-browse@amcclosky
 ```
 
-After installing, run `agent-chrome setup` once.
+After installing, run `local-browse setup` once.
 
 #### Skills
 
-- **agent-chrome** — Start and use the dedicated Helium browser, drive Mobile Safari in the iOS Simulator with [wdio session](https://webdriver.io/docs/session) (pages) and [agent-device](https://github.com/callstack/agent-device) (native iOS UI), and log in with agent-vault credentials
+- **local-browse** — Start and use the dedicated Helium browser, drive Mobile Safari in the iOS Simulator with [wdio session](https://webdriver.io/docs/session) (pages) and [agent-device](https://github.com/callstack/agent-device) (native iOS UI), and log in with agent-vault credentials
   - `references/playbooks/` holds saved, verified workflows (sign in to Google, sign in with Google on another site, open a site on mobile) so they are not rediscovered each time
 
 #### Binaries
 
-- `agent-chrome` — `start`, `stop`, `status`, `setup`, and `vault add|remove|op-token`
+- `local-browse` — `start`, `stop`, `status`, `setup`, and `vault add|remove|op-token`
 - `agent-browser-plugin-vault` — agent-browser credential provider (`keychain` and `1password` backends)
 
 #### MCP servers

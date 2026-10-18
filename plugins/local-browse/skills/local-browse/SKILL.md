@@ -1,9 +1,9 @@
 ---
-name: agent-chrome
-description: Run and use the dedicated persistent Helium browser (Chromium), drive Mobile Safari in a persistent iOS Simulator with wdio session (pages) and agent-device (native iOS UI), and use the agent-only credential vault for agent-browser. Use when a browser task needs a logged-in session, a real headed browser, real mobile Safari or an iPhone view of a page, or credentials for a site; or when the user asks to do or check something "on mobile", "in mobile", or on "mobile web" (use the iOS Simulator workflow, not agent-browser); or when the user mentions agent-chrome, agent-device, the agent vault, or the "Agent Browser" 1Password vault.
+name: local-browse
+description: Run and use the dedicated persistent Helium browser (Chromium), drive Mobile Safari in a persistent iOS Simulator with wdio session (pages) and agent-device (native iOS UI), and use the agent-only credential vault for agent-browser. Use when a browser task needs a logged-in session, a real headed browser, real mobile Safari or an iPhone view of a page, or credentials for a site; or when the user asks to do or check something "on mobile", "in mobile", or on "mobile web" (use the iOS Simulator workflow, not agent-browser); or when the user mentions local-browse, agent-device, the agent vault, or the "Agent Browser" 1Password vault.
 ---
 
-# agent-chrome
+# local-browse
 
 A dedicated, headed [Helium](https://github.com/imputnet/helium) (Chromium) browser, using Helium's own default profile (`~/Library/Application Support/net.imput.helium`, separate from Google Chrome's), exposing CDP on `127.0.0.1:9222`. `~/.agent-browser/config.json` points agent-browser at it by default, so plain `agent-browser <cmd>` drives this Helium.
 
@@ -24,16 +24,16 @@ When you work out a valuable workflow that is not listed (a login flow, a multi-
 ## Before browsing
 
 ```bash
-agent-chrome status   # exit 1 if not running
-agent-chrome start    # no-op if already running; add --headless only if the user asks
+local-browse status   # exit 1 if not running
+local-browse start    # no-op if already running; add --headless only if the user asks
 ```
 
-If `agent-chrome` is not on PATH or agent-browser cannot connect, run `agent-chrome setup` once (links the scripts into `~/.local/bin`, registers the credential plugins, sets the default CDP target).
+If `local-browse` is not on PATH or agent-browser cannot connect, run `local-browse setup` once (links the scripts into `~/.local/bin`, registers the credential plugins, sets the default CDP target).
 
-`agent-chrome stop` quits it cleanly over CDP so cookies are flushed to disk. Logins and cookies persist in the profile across restarts. Never `kill`/`pkill` Helium yourself: that marks the profile as crashed and loses recent logins (a Google login was lost this way).
+`local-browse stop` quits it cleanly over CDP so cookies are flushed to disk. Logins and cookies persist in the profile across restarts. Never `kill`/`pkill` Helium yourself: that marks the profile as crashed and loses recent logins (a Google login was lost this way).
 
-- Helium allows one instance per profile and is also the user's own Helium app. If it is already open without the debugging port, `agent-chrome start` refuses with a message; ask the user to quit it rather than quitting it yourself, unless it is clearly idle.
-- Overrides: `AGENT_CHROME_APP` (default `Helium`; another Chromium browser such as Google Chrome needs `AGENT_CHROME_PROFILE` too, because Chrome ignores the debugging port on its default profile), `AGENT_CHROME_PROFILE` (a separate user-data-dir, off by default), `AGENT_CHROME_PORT`.
+- Helium allows one instance per profile and is also the user's own Helium app. If it is already open without the debugging port, `local-browse start` refuses with a message; ask the user to quit it rather than quitting it yourself, unless it is clearly idle.
+- Overrides: `LOCAL_BROWSE_APP` (default `Helium`; another Chromium browser such as Google Chrome needs `LOCAL_BROWSE_PROFILE` too, because Chrome ignores the debugging port on its default profile), `LOCAL_BROWSE_PROFILE` (a separate user-data-dir, off by default), `LOCAL_BROWSE_PORT`.
 
 ## Cookie banners
 
@@ -154,9 +154,9 @@ wdio session fill <code ref> "$(otp)" >/dev/null 2>&1
 The user stores secrets; prompts keep passwords out of shell history and arguments:
 
 ```bash
-agent-chrome vault add <item> <username> [login-url]   # prompts for the password
-agent-chrome vault remove <item>
-agent-chrome vault op-token                            # prompts for the 1Password service-account token
+local-browse vault add <item> <username> [login-url]   # prompts for the password
+local-browse vault remove <item>
+local-browse vault op-token                            # prompts for the 1Password service-account token
 ```
 
-One-time 1Password setup: create a vault named **Agent Browser**, create a service account with access to only that vault (read is enough; write lets agents create items with `op`), then run `agent-chrome vault op-token`.
+One-time 1Password setup: create a vault named **Agent Browser**, create a service account with access to only that vault (read is enough; write lets agents create items with `op`), then run `local-browse vault op-token`.

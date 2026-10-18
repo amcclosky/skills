@@ -26,14 +26,14 @@
       "source": "./plugins/ui-skills"
     },
     {
-      "name": "agent-chrome",
-      "description": "Persistent headed Helium browser for agent-browser, plus an agent-only credential vault (Keychain or 1Password service account)",
+      "name": "local-browse",
+      "description": "Persistent local browsers for agents (headed Helium, desktop Safari, Mobile Safari in the iOS Simulator), an agent-only credential vault (Keychain or 1Password service account), and saved playbooks",
       "version": "2026.4.1",
       "category": "automation",
       "author": {
         "name": "Anthony McClosky"
       },
-      "source": "./plugins/agent-chrome"
+      "source": "./plugins/local-browse"
     }
   ]
 }

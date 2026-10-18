@@ -1,0 +1,9 @@
+{
+  "name": "local-browse",
+  "version": "2026.4.1",
+  "description": "Persistent local browsers for agents (headed Helium, desktop Safari, Mobile Safari in the iOS Simulator), an agent-only credential vault (Keychain or 1Password service account), and saved playbooks",
+  "author": {
+    "name": "Anthony McClosky"
+  },
+  "license": "MIT"
+}
