@@ -51,6 +51,27 @@ claude plugin install ui-skills@amcclosky
 - **react-view-transitions** — Implement smooth animations using React's View Transition API
 - **web-design-guidelines** — Review UI code for Web Interface Guidelines compliance
 
+---
+
+### agent-chrome
+
+A persistent, headed Chrome for [agent-browser](https://github.com/vercel-labs/agent-browser), plus an agent-only credential vault (macOS Keychain or a scoped 1Password service account).
+
+```
+claude plugin install agent-chrome@amcclosky
+```
+
+After installing, run `agent-chrome setup` once.
+
+#### Skills
+
+- **agent-chrome** — Start and use the dedicated Chrome, and log in with agent-vault credentials
+
+#### Binaries
+
+- `agent-chrome` — `start`, `stop`, `status`, `setup`, and `vault add|remove|op-token`
+- `agent-browser-plugin-vault` — agent-browser credential provider (`keychain` and `1password` backends)
+
 ## Acknowledgements
 
 Some skills are adapted from [mattpocock/skills](https://github.com/mattpocock/skills) and [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills).

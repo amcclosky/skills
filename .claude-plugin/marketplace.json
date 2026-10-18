@@ -24,6 +24,16 @@
         "name": "Anthony McClosky"
       },
       "source": "./plugins/ui-skills"
+    },
+    {
+      "name": "agent-chrome",
+      "description": "Persistent headed Chrome for agent-browser, plus an agent-only credential vault (Keychain or 1Password service account)",
+      "version": "2026.4.1",
+      "category": "automation",
+      "author": {
+        "name": "Anthony McClosky"
+      },
+      "source": "./plugins/agent-chrome"
     }
   ]
 }

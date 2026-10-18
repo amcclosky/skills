@@ -1,0 +1,9 @@
+{
+  "name": "agent-chrome",
+  "version": "2026.4.1",
+  "description": "Persistent headed Chrome for agent-browser, plus an agent-only credential vault (Keychain or 1Password service account)",
+  "author": {
+    "name": "Anthony McClosky"
+  },
+  "license": "MIT"
+}

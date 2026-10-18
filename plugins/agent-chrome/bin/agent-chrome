@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Manage a dedicated, persistent, headed Chrome for agent-browser (CDP on localhost),
+# plus the agent's own credential vault (macOS Keychain / 1Password service account).
+set -euo pipefail
+
+PORT="${AGENT_CHROME_PORT:-9222}"
+PROFILE="${AGENT_CHROME_PROFILE:-$HOME/.agent-browser/chrome-profile}"
+APP="Google Chrome"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+KEYCHAIN_PREFIX="agent-browser:"
+
+is_up() { curl -fsS --max-time 2 "http://127.0.0.1:$PORT/json/version" >/dev/null 2>&1; }
+
+start() {
+  if is_up; then
+    echo "agent-chrome already running on port $PORT"
+    return 0
+  fi
+  mkdir -p "$PROFILE"
+  # No --enable-automation: that flag is what triggers the "controlled by automated software" banner.
+  local args=(
+    "--user-data-dir=$PROFILE"
+    "--remote-debugging-port=$PORT"
+    "--remote-debugging-address=127.0.0.1"
+    "--no-first-run"
+    "--no-default-browser-check"
+  )
+  [[ "${1:-}" == "--headless" ]] && args+=("--headless=new")
+  open -na "$APP" --args "${args[@]}"
+  for _ in $(seq 1 30); do
+    is_up && { echo "agent-chrome ready: http://127.0.0.1:$PORT (profile: $PROFILE)"; return 0; }
+    sleep 0.5
+  done
+  echo "agent-chrome failed to start on port $PORT" >&2
+  return 1
+}
+
+stop() {
+  pkill -f -- "--user-data-dir=$PROFILE" || { echo "agent-chrome not running"; return 0; }
+  echo "agent-chrome stopped"
+}
+
+status() {
+  if is_up; then
+    echo "running on port $PORT (profile: $PROFILE)"
+  else
+    echo "not running"
+    return 1
+  fi
+}
+
+# Link the bin scripts into ~/.local/bin (stable paths) and register the credential
+# plugins + default CDP target in ~/.agent-browser/config.json.
+setup() {
+  mkdir -p "$HOME/.local/bin" "$HOME/.agent-browser"
+  for name in agent-chrome agent-browser-plugin-vault; do
+    ln -sf "$SCRIPT_DIR/$name" "$HOME/.local/bin/$name"
+  done
+  /usr/bin/python3 -I - "$HOME/.agent-browser/config.json" "$HOME/.local/bin/agent-browser-plugin-vault" "$PORT" <<'PY'
+import json, os, sys
+
+path, command, port = sys.argv[1], sys.argv[2], sys.argv[3]
+config = {}
+if os.path.exists(path):
+    with open(path) as f:
+        config = json.load(f)
+
+ours = {"keychain", "1password"}
+plugins = [p for p in config.get("plugins", []) if p.get("name") not in ours]
+for backend in ("keychain", "1password"):
+    plugins.append({
+        "name": backend,
+        "command": command,
+        "args": ["--backend", backend],
+        "capabilities": ["credential.read"],
+    })
+config["plugins"] = plugins
+config["cdp"] = port
+
+with open(path, "w") as f:
+    json.dump(config, f, indent=2)
+    f.write("\n")
+PY
+  echo "linked scripts into ~/.local/bin and updated ~/.agent-browser/config.json"
+}
+
+vault() {
+  case "${1:-}" in
+    add)
+      # agent-chrome vault add <item> <username> [url]  (password is prompted, never an argument)
+      local item="${2:?usage: agent-chrome vault add <item> <username> [url]}"
+      local user="${3:?usage: agent-chrome vault add <item> <username> [url]}"
+      local url="${4:-}"
+      local extra=()
+      [[ -n "$url" ]] && extra+=(-j "$url")
+      security add-generic-password -U -s "$KEYCHAIN_PREFIX$item" -a "$user" "${extra[@]}" -T /usr/bin/security -w
+      echo "stored keychain item '$item'"
+      ;;
+    remove)
+      security delete-generic-password -s "$KEYCHAIN_PREFIX${2:?usage: agent-chrome vault remove <item>}" >/dev/null
+      echo "removed keychain item '$2'"
+      ;;
+    op-token)
+      # Service account token for the "Agent Browser" 1Password vault (prompted, never an argument).
+      security add-generic-password -U -s "${KEYCHAIN_PREFIX}op-token" -a service-account -T /usr/bin/security -w
+      echo "stored 1Password service account token"
+      ;;
+    *) echo "usage: agent-chrome vault add <item> <username> [url] | remove <item> | op-token" >&2; exit 2 ;;
+  esac
+}
+
+case "${1:-start}" in
+  start) shift || true; start "${1:-}" ;;
+  stop) stop ;;
+  status) status ;;
+  setup) setup ;;
+  vault) shift; vault "$@" ;;
+  *) echo "usage: agent-chrome [start [--headless]|stop|status|setup|vault ...]" >&2; exit 2 ;;
+esac

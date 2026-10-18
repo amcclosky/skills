@@ -1,0 +1,174 @@
+#!/usr/bin/python3 -I
+"""agent-browser credential provider (agent-browser.plugin.v1, credential.read).
+
+Backends (selected with --backend):
+  keychain   generic password in the macOS Keychain, service "agent-browser:<item>",
+             account = username, comment = login URL (optional)
+  1password  item in the dedicated "Agent Browser" vault, read with a service-account
+             token kept in the Keychain (service "agent-browser:op-token")
+
+One request per process: JSON envelope on stdin, one JSON object on stdout.
+Error messages are deliberately generic and never contain secret material.
+"""
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+
+PROTOCOL = "agent-browser.plugin.v1"
+KEYCHAIN_PREFIX = "agent-browser:"
+OP_VAULT = "Agent Browser"
+TIMEOUT = 20
+
+
+class PluginError(Exception):
+    pass
+
+
+def run(argv, env=None):
+    try:
+        return subprocess.run(
+            argv, capture_output=True, text=True, timeout=TIMEOUT, env=env, stdin=subprocess.DEVNULL
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        raise PluginError("command failed")
+
+
+def keychain_password(service, account=None):
+    argv = ["/usr/bin/security", "find-generic-password", "-s", service]
+    if account:
+        argv += ["-a", account]
+    proc = run(argv + ["-w"])
+    if proc.returncode != 0:
+        raise PluginError("credential not found")
+    return proc.stdout.rstrip("\n")
+
+
+def keychain_attribute(output, name):
+    match = re.search(r'^\s*"%s"<blob>="((?:[^"\\]|\\.)*)"' % re.escape(name), output, re.M)
+    return match.group(1) if match else None
+
+
+def resolve_keychain(item, url):
+    service = KEYCHAIN_PREFIX + item
+    proc = run(["/usr/bin/security", "find-generic-password", "-s", service])
+    if proc.returncode != 0:
+        raise PluginError("credential not found")
+    username = keychain_attribute(proc.stdout, "acct")
+    if not username:
+        raise PluginError("credential has no readable username")
+    credential = {"username": username, "password": keychain_password(service, username)}
+    url = url or keychain_attribute(proc.stdout, "icmt")
+    if url:
+        credential["url"] = url
+    return credential
+
+
+def find_op():
+    extra = [
+        os.path.expanduser("~/.local/share/mise/shims"),
+        "/opt/homebrew/bin",
+        "/usr/local/bin",
+        os.path.expanduser("~/.local/bin"),
+    ]
+    path = os.pathsep.join(extra + [os.environ.get("PATH", "")])
+    op = shutil.which("op", path=path)
+    if not op:
+        raise PluginError("op CLI not found")
+    return op, path
+
+
+def field_by_purpose(fields, purpose):
+    for field in fields:
+        if field.get("purpose") == purpose and field.get("value"):
+            return field["value"]
+    return None
+
+
+def resolve_1password(item, url):
+    # Fail closed: without the scoped token, op would fall back to the desktop app
+    # session, which has access to every vault. Never call op unless the token is set.
+    try:
+        token = keychain_password(KEYCHAIN_PREFIX + "op-token")
+    except PluginError:
+        raise PluginError("1password service account token unavailable")
+    if not token:
+        raise PluginError("1password service account token unavailable")
+
+    op, path = find_op()
+    env = {
+        "PATH": path,
+        "HOME": os.path.expanduser("~"),
+        "OP_SERVICE_ACCOUNT_TOKEN": token,
+    }
+    proc = run([op, "item", "get", item, "--vault", OP_VAULT, "--format", "json", "--reveal"], env=env)
+    if proc.returncode != 0:
+        raise PluginError("credential not found")
+    try:
+        data = json.loads(proc.stdout)
+    except ValueError:
+        raise PluginError("unexpected response from op")
+
+    fields = data.get("fields", [])
+    username = field_by_purpose(fields, "USERNAME")
+    password = field_by_purpose(fields, "PASSWORD")
+    if not username or not password:
+        raise PluginError("item is missing a username or password")
+    credential = {"username": username, "password": password}
+    urls = data.get("urls") or []
+    url = url or (urls[0].get("href") if urls else None)
+    if url:
+        credential["url"] = url
+    return credential
+
+
+BACKENDS = {"keychain": resolve_keychain, "1password": resolve_1password}
+
+
+def valid_item(value):
+    return isinstance(value, str) and 0 < len(value) <= 200 and not re.search(r"[\x00-\x1f]", value)
+
+
+def handle(backend, envelope):
+    if envelope.get("protocol") != PROTOCOL:
+        raise PluginError("unsupported protocol")
+    kind = envelope.get("type")
+    if kind == "plugin.manifest":
+        return {
+            "manifest": {
+                "name": backend,
+                "capabilities": ["credential.read"],
+                "description": "Agent credential vault (%s backend)" % backend,
+            }
+        }
+    if kind == "credential.resolve":
+        request = envelope.get("request") or {}
+        item = request.get("itemRef") or request.get("profileName")
+        if not valid_item(item):
+            raise PluginError("invalid item reference")
+        return {"credential": BACKENDS[backend](item, request.get("url"))}
+    raise PluginError("unsupported request type")
+
+
+def main():
+    backend = None
+    if "--backend" in sys.argv:
+        index = sys.argv.index("--backend")
+        backend = sys.argv[index + 1] if index + 1 < len(sys.argv) else None
+    try:
+        if backend not in BACKENDS:
+            raise PluginError("unknown backend")
+        envelope = json.loads(sys.stdin.read())
+        body = handle(backend, envelope)
+        response = {"protocol": PROTOCOL, "success": True}
+        response.update(body)
+    except (PluginError, ValueError) as error:
+        message = str(error) if isinstance(error, PluginError) else "invalid request"
+        response = {"protocol": PROTOCOL, "success": False, "error": message}
+    sys.stdout.write(json.dumps(response))
+
+
+if __name__ == "__main__":
+    main()
